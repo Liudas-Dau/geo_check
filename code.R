@@ -10,8 +10,8 @@
 #' @param res
 #'
 #' @note Note that function assumes that commas in numerical ages seperate thousand.
-time <- "Cenozoic"
-res <- "Interval"
+time <- "Pleistocene"
+res <- "Epoch"
 
 df1 <- as.data.frame(df)
 age_column <- "Age"
@@ -39,15 +39,17 @@ for (i in 1:nrow(df1)){
     }
   }
 }
-time
 
 col_id <- which(apply(geo_key,2, function(x) time %in% x ))
+time_ids <- which(geo_key[,col_id] == time)
+range_id <- range(time_ids)
 
-range_id <- range(which(geo_key[,col_id] == time))
+time_numeric <- c(geo_key[range_id[2],7],geo_key[range_id[1],6])
 
-geo_key[range_id,c(7)]
-df1$numeric_age
-geo_key
-
+df1[which(
+  (df1$numeric_age >= time_numeric[1] & df1$numeric_age <= time_numeric[2]) |
+    is.na(df1$numeric_age) & ((df1$interval_age %in% geo_key[,res][time_ids])
+                              | is.na(df1$interval_age))
+  ),]
 
 
